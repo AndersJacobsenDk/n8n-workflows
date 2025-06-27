@@ -1,0 +1,74 @@
+{
+  "name": "Crosspost TikTok Video",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "list",
+        "drive": "",
+        "query": "name contains '.mp4' and 'VideosToPost' in parents",
+        "limit": 10
+      },
+      "id": "2",
+      "name": "Find Videos",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ],
+      "credentials": {
+        "googleApi": "Google Drive API"
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "title": "Uploaded via n8n",
+        "description": "#shorts",
+        "visibility": "private",
+        "videoUrl": "={{ $json[\"webContentLink\"] }}"
+      },
+      "id": "3",
+      "name": "Upload to YouTube",
+      "type": "n8n-nodes-base.youtube",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": "YouTube OAuth"
+      }
+    }
+  ],
+  "connections": {
+    "Start": [
+      {
+        "node": "Find Videos",
+        "type": "main",
+        "index": 0
+      }
+    ],
+    "Find Videos": [
+      {
+        "node": "Upload to YouTube",
+        "type": "main",
+        "index": 0
+      }
+    ]
+  },
+  "active": false,
+  "settings": {},
+  "id": "crosspost-tiktok-video"
+}
